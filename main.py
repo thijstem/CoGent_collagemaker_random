@@ -54,11 +54,16 @@ def image():
     else:
         data_json = json.loads(response.read())
         afbeelding = data_json["sequences"][0]['canvases'][0]["images"][0]["resource"]["@id"]
-        afbeelding = afbeelding.replace("full/full/0/default.jpg","square/500,/0/default.jpg")
+        afbeelding = afbeelding.replace("full/full/0/default.jpg","square/400,/0/default.jpg")
+        manifestje = data_json["@id"]
+        objectnummer = manifestje.rpartition('/')[2]
+        webplatform = "https://data.collectie.gent/entity/" + objectnummer
+        print(webplatform)
         return afbeelding
 
+lst = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-for i in [100, 200, 300, 400, 500, 600, 700, 800, 900]:
+for i in lst:
     afbeelding = image()
     prentje = requests.get(afbeelding).content
     print(time.perf_counter())
@@ -69,7 +74,7 @@ for i in [100, 200, 300, 400, 500, 600, 700, 800, 900]:
     print("na " + str(i) + " downloaden")
 
 collage = Image.new("RGBA", (1500, 1500), color=(255, 255, 255, 255))
-lst = [100, 200, 300, 400, 500, 600, 700, 800, 900]
+
 
 c = 0
 for i in range(0, 1500, 500):
@@ -81,6 +86,9 @@ for i in range(0, 1500, 500):
         collage.paste(photo, (i, j))
         c += 1
 collage.show()
+collage.save(f"{zoekterm}.png")
 print(time.perf_counter())
 
 ##snelheid: gaat supersnel eenmaal goede url er is om te downloaden // ik denk dat urlopen langste duurt
+
+## hoe verbeteren? sneller, zoeken in beschrijvingen, zorgen dat hij opnieuw start als beeld er al is
