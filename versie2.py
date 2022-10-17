@@ -17,13 +17,13 @@ def iiifmanifest():
 
     sparqlQuery = """
      PREFIX cidoc: <http://www.cidoc-crm.org/cidoc-crm/>
-     SELECT ?o ?title WHERE {
+     SELECT DISTINCT ?o ?title WHERE {
      ?object cidoc:P129i_is_subject_of ?o .
      ?object cidoc:P102_has_title ?title.
      FILTER (regex(?title, "%s" , "i"))
      BIND(RAND() AS ?random) .
      } ORDER BY ?random
-     LIMIT 100
+     LIMIT 1000
      """ % (zoekterm,)
 
     c = 0
@@ -31,6 +31,10 @@ def iiifmanifest():
     qlod = sparql.queryAsListOfDicts(sparqlQuery)
     print(time.perf_counter())
     print(qlod)
+    print(str(len(qlod)) + " gevonden objecten")
+
+
+    ##drop de dubbele
     for i in range(0, len(qlod)):
         try:
             response = urlopen(qlod[i]['o'])
