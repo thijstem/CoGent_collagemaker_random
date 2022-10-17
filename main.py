@@ -54,7 +54,7 @@ def image():
     else:
         data_json = json.loads(response.read())
         afbeelding = data_json["sequences"][0]['canvases'][0]["images"][0]["resource"]["@id"]
-        afbeelding = afbeelding.replace("full/full/0/default.jpg","square/400,/0/default.jpg")
+        #afbeelding = afbeelding.replace("full/full/0/default.jpg","square/400,/0/default.jpg")
         manifestje = data_json["@id"]
         objectnummer = manifestje.rpartition('/')[2]
         webplatform = "https://data.collectie.gent/entity/" + objectnummer

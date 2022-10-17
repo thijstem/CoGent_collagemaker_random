@@ -10,6 +10,8 @@ from PIL import Image, ImageEnhance
 
 zoekterm = input("Wat zoek je? ")
 
+lst = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
 
 def iiifmanifest():
     ssl._create_default_https_context = ssl._create_unverified_context
@@ -22,9 +24,10 @@ def iiifmanifest():
      FILTER (regex(?title, "%s" , "i"))
      BIND(RAND() AS ?random) .
      } ORDER BY ?random
-     LIMIT 30
+     LIMIT 100
      """ % (zoekterm,)
 
+    c = 0
     sparql = SPARQL("https://stad.gent/sparql")
     qlod = sparql.queryAsListOfDicts(sparqlQuery)
     print(qlod)
@@ -40,29 +43,31 @@ def iiifmanifest():
             afbeelding = data_json["sequences"][0]['canvases'][0]["images"][0]["resource"]["@id"]
             afbeelding = afbeelding.replace("full/full/0/default.jpg", "square/500,/0/default.jpg")
             #df_sparql.loc[i, "afbeeldingen"] = afbeelding
-            print(str(b) + " afbeelding(en) gedownload")
+            print(str(lst[c]) + " afbeelding(en) gedownload")
             prentje = requests.get(afbeelding).content
-            with open(str(b) + '.jpg', 'wb') as handler:
+            with open(str(lst[c]) + '.jpg', 'wb') as handler:
                 handler.write(prentje)
+            c += 1
+        if c == 9:
+            break
+
+
+iiifmanifest()
 
 
 collage = Image.new("RGBA", (1500, 1500), color=(255, 255, 255, 255))
 
-lst = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-for b in lst:
-    afbeelding = iiifmanifest()
-
-c = 0
+d = 0
 
 for i in range(0, 1500, 500):
     for j in range(0, 1500, 500):
-        file = str(lst[c]) + ".jpg"
+        file = str(lst[d]) + ".jpg"
         photo = Image.open(file).convert("RGBA")
         photo = photo.resize((500, 500))
 
         collage.paste(photo, (i, j))
-        c += 1
+        d += 1
 collage.show()
 collage.save(f"{zoekterm}.png")
 
