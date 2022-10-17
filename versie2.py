@@ -1,15 +1,14 @@
-import pandas as pd
 from lodstorage.sparql import SPARQL
-from lodstorage.csv import CSV
 import ssl
 import json
 from urllib.error import HTTPError
 from urllib.request import urlopen
 import requests
 from PIL import Image, ImageEnhance
+import time
 
 zoekterm = input("Wat zoek je? ")
-
+print(time.perf_counter())
 lst = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 
@@ -30,6 +29,7 @@ def iiifmanifest():
     c = 0
     sparql = SPARQL("https://stad.gent/sparql")
     qlod = sparql.queryAsListOfDicts(sparqlQuery)
+    print(time.perf_counter())
     print(qlod)
     for i in range(0, len(qlod)):
         try:
@@ -42,12 +42,17 @@ def iiifmanifest():
             data_json = json.loads(response.read())
             afbeelding = data_json["sequences"][0]['canvases'][0]["images"][0]["resource"]["@id"]
             afbeelding = afbeelding.replace("full/full/0/default.jpg", "square/500,/0/default.jpg")
-            #df_sparql.loc[i, "afbeeldingen"] = afbeelding
-            print(str(lst[c]) + " afbeelding(en) gedownload")
             prentje = requests.get(afbeelding).content
             with open(str(lst[c]) + '.jpg', 'wb') as handler:
                 handler.write(prentje)
+            manifestje = data_json["@id"]
+            objectnummer = manifestje.rpartition('/')[2]
+            webplatform = "https://data.collectie.gent/entity/" + objectnummer
+            print(webplatform)
+            print(time.perf_counter())
+            print("na downloaden beeld " + str(lst[c]))
             c += 1
+
         if c == 9:
             break
 
@@ -68,7 +73,9 @@ for i in range(0, 1500, 500):
 
         collage.paste(photo, (i, j))
         d += 1
+print("collage klaar ")
 collage.show()
+print(time.perf_counter())
 collage.save(f"{zoekterm}.png")
 
 

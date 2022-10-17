@@ -12,6 +12,8 @@ import time
 time.perf_counter()
 
 zoekterm = input("Wat zoek je? ")
+print(time.perf_counter())
+
 
 def iiifmanifest():
     ssl._create_default_https_context = ssl._create_unverified_context
